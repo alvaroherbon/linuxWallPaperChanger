@@ -18,10 +18,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from gi.repository import Adw, Gio, Gtk, GLib
+import requests
 
-@Gtk.Template(resource_path='/org/gnome/linuxWallpaperChanger/window.ui')
+
+@Gtk.Template(resource_path="/org/gnome/linuxWallpaperChanger/window.ui")
 class LinuxwallpaperchangerWindow(Adw.ApplicationWindow):
-    __gtype_name__ = 'LinuxwallpaperchangerWindow'
+    __gtype_name__ = "LinuxwallpaperchangerWindow"
 
     main_text_view = Gtk.Template.Child()
     search_entry = Gtk.Template.Child()
@@ -31,8 +33,38 @@ class LinuxwallpaperchangerWindow(Adw.ApplicationWindow):
 
         save_action = Gio.SimpleAction(name="save-as")
         save_action.connect("activate", self.save_file_dialog)
+        self.search_entry.connect("activate", self.on_entry_activate)
         self.add_action(save_action)
 
+    def on_entry_activate(self, entry):
+        text = entry.get_text()
+        print(f"Entry activated with text: {text}")
+        entry.set_text("")
+        self.fech_photos(text)
+
+    def fetch_photos(self, text):
+        api_key = "D1MWpxMdgnJFNY6odPTuZU_H7lYyzC1cIKiYg-u9bWk"
+        url = "https://api.unsplash.com/search/photos"
+        headers = {"Authorization": f"Client-ID {api_key}"}
+        params = {
+            "query": text,
+            "per_page": 5,
+        }  # Cambia 'per_page' según cuántas fotos desees obtener
+        try:
+            response = requests.get(url, headers=headers, params=params)
+            response.raise_for_status()  # Lanza una excepción si la solicitud no es exitosa
+            data = response.json()
+            self.display_photos(data)
+        except requests.RequestException as e:
+            print(f"Error fetching photos from Unsplash: {e}")
+
+    def display_photos(self, data):
+        """Muestra las URLs de las fotos en la consola."""
+        if "results" in data:
+            for photo in data["results"]:
+                print(f"Photo URL: {photo['urls']['small']}")
+        else:
+            print("No photos found.")
 
     def save_file_dialog(self, action, _):
         native = Gtk.FileDialog()
@@ -46,29 +78,30 @@ class LinuxwallpaperchangerWindow(Adw.ApplicationWindow):
     def save_file(self, file):
         buffer = self.main_text_view.get_buffer()
 
-    # Retrieve the iterator at the start of the buffer
+        # Retrieve the iterator at the start of the buffer
         start = buffer.get_start_iter()
-    # Retrieve the iterator at the end of the buffer
+        # Retrieve the iterator at the end of the buffer
         end = buffer.get_end_iter()
-    # Retrieve all the visible text between the two bounds
+        # Retrieve all the visible text between the two bounds
         text = buffer.get_text(start, end, False)
 
-    # If there is nothing to save, return early
+        # If there is nothing to save, return early
         if not text:
             return
 
-        bytes = GLib.Bytes.new(text.encode('utf-8'))
+        bytes = GLib.Bytes.new(text.encode("utf-8"))
 
-    # Start the asynchronous operation to save the data into the file
-        file.replace_contents_bytes_async(bytes,None,False,Gio.FileCreateFlags.NONE,None,self.save_file_complete)
+        # Start the asynchronous operation to save the data into the file
+        file.replace_contents_bytes_async(
+            bytes, None, False, Gio.FileCreateFlags.NONE, None, self.save_file_complete
+        )
 
     def save_file_complete(self, file, result):
         res = file.replace_contents_finish(result)
-        info = file.query_info("standard::display-name",Gio.FileQueryInfoFlags.NONE)
+        info = file.query_info("standard::display-name", Gio.FileQueryInfoFlags.NONE)
         if info:
             display_name = info.get_attribute_string("standard::display-name")
         else:
             display_name = file.get_basename()
         if not res:
             print(f"Unable to save {display_name}")
-

@@ -11,6 +11,24 @@ gnome.compile_resources('linuxwallpaperchanger',
 
 python = import('python')
 
+# Encuentra la instalación de Python3
+py_installation = python.find_installation('python3')
+
+# Añade las dependencias de Python necesarias
+py_deps = ['requests']
+
+# Definimos una tarea personalizada para instalar las dependencias de Python
+install_python_dependencies = custom_target(
+  'install_python_dependencies',
+  command: [py_installation, '-m', 'pip', 'install', '--user', '-r', 'requirements.txt'],
+  output: 'pip-install.log'
+)
+
+# Asegura que la tarea personalizada para instalar dependencias se ejecute antes de la configuración
+install_python_dependencies_dep = declare_dependency(
+  link_with: install_python_dependencies
+)
+
 conf = configuration_data()
 conf.set('PYTHON', python.find_installation('python3').full_path())
 conf.set('VERSION', meson.project_version())
@@ -32,4 +50,5 @@ linuxwallpaperchanger_sources = [
   'window.py',
 ]
 
+# Instala los datos después de asegurarse que las dependencias están instaladas
 install_data(linuxwallpaperchanger_sources, install_dir: moduledir)
