@@ -1,6 +1,6 @@
 data/org.gnome.linuxWallpaperChanger.desktop.in
 data/org.gnome.linuxWallpaperChanger.metainfo.xml.in
 data/org.gnome.linuxWallpaperChanger.gschema.xml
-src/main.py
-src/window.py
+src/main.js
+src/window.js
 src/window.ui

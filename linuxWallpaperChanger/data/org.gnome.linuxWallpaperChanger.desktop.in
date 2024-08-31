@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=linuxwallpaperchanger
-Exec=linuxwallpaperchanger
+Exec=org.gnome.linuxWallpaperChanger
 Icon=org.gnome.linuxWallpaperChanger
 Terminal=false
 Type=Application

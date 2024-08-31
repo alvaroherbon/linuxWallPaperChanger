@@ -4,18 +4,16 @@
   <requires lib="Adw" version="1.0"/>
   <template class="LinuxwallpaperchangerWindow" parent="AdwApplicationWindow">
     <property name="default-width">600</property>
-    <property name="default-height">300</property>
-    <property name="title">Linux Wallpaper Changer</property>
+    <property name="default-height">400</property>
     <property name="content">
       <object class="AdwToolbarView">
         <child type="top">
-          <object class="AdwHeaderBar" id="header_bar">
+          <object class="AdwHeaderBar">
             <child type="start">
               <object class="GtkEntry" id="search_entry">
                 <attributes>
                   <attribute name="weight" value="PANGO_WEIGHT_BOLD"/>
                 </attributes>
-                <property name="max-length">20</property>
                 <property name="placeholder-text">Search</property>
               </object>
             </child>
@@ -30,19 +28,32 @@
           </object>
         </child>
         <property name="content">
-           <object class="GtkScrolledWindow">
-    <property name="hexpand">true</property>
-    <property name="vexpand">true</property>
-    <property name="margin-top">6</property>
-    <property name="margin-bottom">6</property>
-    <property name="margin-start">6</property>
-    <property name="margin-end">6</property>
-              <property name="child">
-                 <object class="GtkTextView" id="main_text_view">
-        <property name="monospace">true</property>
-      </object>
-    </property>
-  </object>
+          <object class="GtkBox" id="box_container">
+            <property name="orientation">vertical</property>
+            <property name="spacing">10</property>
+
+
+              <!-- Image Display -->
+              <child>
+                <object class="GtkPicture" id="image_display">
+                  <property name="halign">center</property>
+                  <property name="valign">center</property>
+                  <style>
+                    <class name="rounded-picture"/>
+                  </style>
+                </object>
+              </child>
+
+              <!-- Set Background Button -->
+              <child>
+                <object class="GtkButton" id="set_background_button">
+                  <property name="label">Establecer como Fondo</property>
+                  <property name="halign">center</property>
+                  <property name="action-name">win.open</property>
+                </object>
+              </child>
+
+          </object>
         </property>
       </object>
     </property>
@@ -62,13 +73,9 @@
         <attribute name="action">app.about</attribute>
       </item>
       <item>
-      <attribute name="label" translatable="yes">_Save as...</attribute>
-      <attribute name="action">win.save-as</attribute>
-    </item>
-      <item>
-      <attribute name="label" translatable="yes">_Dark mode</attribute>
-      <attribute name="action">app.dark-mode</attribute>
-    </item>
+        <attribute name="label" translatable="yes">_Dark mode</attribute>
+        <attribute name="action">app.dark-mode</attribute>
+      </item>
     </section>
   </menu>
 </interface>

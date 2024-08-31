@@ -3,7 +3,11 @@
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "46",
     "sdk" : "org.gnome.Sdk",
-    "command" : "linuxwallpaperchanger",
+    "sdk-extensions" : [
+        "org.freedesktop.Sdk.Extension.node18",
+        "org.freedesktop.Sdk.Extension.typescript"
+    ],
+    "command" : "org.gnome.linuxWallpaperChanger",
     "finish-args" : [
         "--share=network",
         "--share=ipc",
@@ -11,6 +15,9 @@
         "--device=dri",
         "--socket=wayland"
     ],
+    "build-options" : {
+        "append-path" : "/usr/lib/sdk/typescript/bin:/usr/lib/sdk/node18/bin"
+    },
     "cleanup" : [
         "/include",
         "/lib/pkgconfig",
